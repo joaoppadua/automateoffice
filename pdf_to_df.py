@@ -28,6 +28,12 @@ def list_to_df(metadata_list, text_list):
 fpath = input('Enter file path: ')
 
 metadata_list, text_list = pdf_to_list(fpath)
-print(metadata_list[0])
-print(text_list[0])
 
+#out_path = input('Enter folder path to save csv: ')
+#data.to_csv(os.path.join(out_path, 'pdf_data.csv'))
+
+#DEBUGGER
+#print(metadata_list[0])
+#print(text_list[0])
+data = list_to_df(metadata_list, text_list)
+data.head()
