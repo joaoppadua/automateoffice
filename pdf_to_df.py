@@ -1,6 +1,5 @@
 #Script to parse trough multiple pdf files and convert them to raw text
 
-from numpy import column_stack
 import tika, pandas as pd, os, glob
 from tika import parser
 
@@ -36,4 +35,4 @@ metadata_list, text_list = pdf_to_list(fpath)
 #print(metadata_list[0])
 #print(text_list[0])
 data = list_to_df(metadata_list, text_list)
-data.head()
+print(data.head())
