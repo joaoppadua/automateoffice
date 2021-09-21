@@ -18,7 +18,7 @@ def pdf_to_list(file_path):
         content_l.append(parsed['content'])
     return metadata_l, content_l
             
-#TODO: save Dataframe to csv file for future use
+#create Dataframe from data
 def list_to_df(metadata_list, text_list):
     """takes two lists and converts them to a Pandas DataFrame"""
     df = pd.DataFrame(metadata_list, text_list, columns=['Metadata', 'Text'])
@@ -27,6 +27,11 @@ def list_to_df(metadata_list, text_list):
 fpath = input('Enter file path: ')
 
 metadata_list, text_list = pdf_to_list(fpath)
+
+#TODO: save df as csv 
+
+#TODO: save txt file with content only
+
 
 #out_path = input('Enter folder path to save csv: ')
 #data.to_csv(os.path.join(out_path, 'pdf_data.csv'))
