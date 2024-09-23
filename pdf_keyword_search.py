@@ -25,6 +25,10 @@ def find_keyword_in_pdfs(folder_path, keyword):
 
     return matching_files
 
+#TODO: Add an API call to Sabiá-3 to get a summary of the files that contain the keyword
+def get_sabia_summary(folder_path, keyword):
+    pass
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python pdf_keyword_search.py [folder_path] [keyword]")
