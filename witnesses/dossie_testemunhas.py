@@ -25,7 +25,8 @@ FONTE = "Calibri"                        # ou "Times New Roman"
 TAMANHO_FONTE = 11
 TAMANHO_TITULO = 14
 MARGENS_POL = 0.75                       # 0.75 polegadas ~ 19 mm
-LINHAS_ANOTACOES = 12                    # número de linhas no bloco de anotações
+LINHAS_ANOTACOES = 15                    # número de linhas no bloco de anotações
+ALTURA_LINHA_ANOTACOES = 0.4             # altura de cada linha em polegadas
 # -------------------------------------
 
 # Nomes de colunas esperados no Excel (português) após as mudanças
@@ -101,6 +102,23 @@ def adiciona_bullets(doc, itens):
         p.style = doc.styles['List Bullet']
         p.paragraph_format.space_after = Pt(2)
 
+def adiciona_perguntas_como_lista(doc, perguntas_texto):
+    """Formata perguntas como itens de lista numerada ou com bullets."""
+    if not perguntas_texto or pd.isna(perguntas_texto):
+        return
+    
+    # Divide o texto em linhas individuais
+    linhas = dividir_linhas(perguntas_texto)
+    if not linhas:
+        return
+    
+    # Adiciona cada pergunta como um item de lista
+    for pergunta in linhas:
+        if pergunta.strip():  # Só adiciona se não for vazia
+            p = doc.add_paragraph(pergunta.strip(), style=None)
+            p.style = doc.styles['List Bullet']
+            p.paragraph_format.space_after = Pt(2)
+
 def bordas_tabela(tbl, cor="C0C0C0"):
     """Aplica bordas leves na tabela."""
     _tbl = tbl._tbl
@@ -150,11 +168,13 @@ def adiciona_cabecalho(doc, linha):
         run.bold = True
         pr.add_run(valor)
 
-def adiciona_bloco_anotacoes(doc, linhas=12):
+def adiciona_bloco_anotacoes(doc, linhas=12, altura_linha=0.4):
     adiciona_titulo(doc, "Anotações em audiência")
     tbl = doc.add_table(rows=linhas, cols=1)
     tbl.style = 'Table Grid'
     for i in range(linhas):
+        row = tbl.rows[i]
+        row.height = Inches(altura_linha)  # Define altura da linha
         cell = tbl.cell(i, 0)
         p = cell.paragraphs[0]
         p.add_run(" ")
@@ -194,7 +214,6 @@ def construir_doc(linha, caminho_saida):
     secoes = [
         ("Fatos-chave", COLS["FatosChave"]),
         ("Estratégia", COLS["Estrategia"]),
-        ("Perguntas preparadas", COLS["PerguntasPreparadas"]),
         ("Pontos críticos / Impeachment", COLS["PontosCriticos"]),
         ("Provas", COLS["Provas"]),
         ("Testemunhos anteriores", COLS["TestemunhosAnteriores"]),
@@ -204,9 +223,15 @@ def construir_doc(linha, caminho_saida):
         if itens:
             adiciona_titulo(doc, titulo)
             adiciona_bullets(doc, itens)
+    
+    # Seção especial para perguntas preparadas (como lista)
+    perguntas = linha.get(COLS["PerguntasPreparadas"], "")
+    if perguntas and not pd.isna(perguntas) and str(perguntas).strip():
+        adiciona_titulo(doc, "Perguntas preparadas")
+        adiciona_perguntas_como_lista(doc, perguntas)
 
     # Bloco de anotações
-    adiciona_bloco_anotacoes(doc, linhas=LINHAS_ANOTACOES)
+    adiciona_bloco_anotacoes(doc, linhas=LINHAS_ANOTACOES, altura_linha=ALTURA_LINHA_ANOTACOES)
 
     # Rodapé: etiquetas
     etiquetas = pegar(linha, COLS["Etiquetas"])
@@ -222,6 +247,10 @@ def main():
     # Aceita argumentos da linha de comando
     input_xlsx = sys.argv[1] if len(sys.argv) > 1 else INPUT_XLSX_DEFAULT
     saida_dir = sys.argv[2] if len(sys.argv) > 2 else SAIDA_DIR_DEFAULT
+    
+    # Lembrete sobre delimitadores
+    print("\n⚠️  LEMBRETE: Use ponto e vírgula (;) para separar itens em listas no Excel.")
+    print("   Exemplo: 'Pergunta 1; Pergunta 2; Pergunta 3'\n")
     
     if not os.path.exists(input_xlsx):
         print(f"Erro: Arquivo não encontrado: {input_xlsx}")
