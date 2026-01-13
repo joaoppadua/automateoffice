@@ -100,11 +100,18 @@ def main():
     )
     parser.add_argument(
         '-o', '--output',
-        default='whatsapp_chat',
-        help='Output file prefix (default: whatsapp_chat)'
+        default=None,
+        help='Output file prefix (default: same directory and name as input file)'
     )
 
     args = parser.parse_args()
+
+    # If no output specified, use input file's directory and stem
+    if args.output is None:
+        input_path = Path(args.input_file)
+        output_prefix = str(input_path.parent / input_path.stem)
+    else:
+        output_prefix = args.output
 
     print(f"Parsing WhatsApp chat file: {args.input_file}")
 
@@ -123,7 +130,7 @@ def main():
 
     # Export main DataFrame
     print("\nExporting main chat data...")
-    export_data(df_all, args.output)
+    export_data(df_all, output_prefix)
 
     # Export separate DataFrames for each author
     if len(authors) > 0:
@@ -132,9 +139,9 @@ def main():
             df_author = df_all[df_all['Author'] == author].copy()
             # Sanitize author name for filename
             safe_author = re.sub(r'[^\w\s-]', '_', author).strip()
-            output_prefix = f"{args.output}_{safe_author}"
+            author_output_prefix = f"{output_prefix}_{safe_author}"
             print(f"\nAuthor: {author} ({len(df_author)} messages)")
-            export_data(df_author, output_prefix)
+            export_data(df_author, author_output_prefix)
 
     print("\n✓ All exports completed successfully!")
 

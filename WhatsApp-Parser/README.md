@@ -48,11 +48,19 @@ pip install -r requirements.txt
 
 ### Basic Usage
 
+By default, output files are created in the same directory as the input file, using the input filename as the prefix:
+
 ```bash
 python whatsapp_parser.py <path_to_chat_file.txt>
 ```
 
+For example, if your input file is `/home/user/chats/family_chat.txt`, the output files will be created as:
+- `/home/user/chats/family_chat.csv`
+- `/home/user/chats/family_chat.xlsx`
+
 ### Custom Output Prefix
+
+You can specify a custom output location and prefix using the `-o` flag:
 
 ```bash
 python whatsapp_parser.py <path_to_chat_file.txt> -o my_custom_prefix
@@ -61,6 +69,10 @@ python whatsapp_parser.py <path_to_chat_file.txt> -o my_custom_prefix
 ### Example
 
 ```bash
+# Use default output (same directory and name as input)
+python whatsapp_parser.py /home/user/chats/conversation.txt
+
+# Specify custom output prefix
 python whatsapp_parser.py chat_backup.txt -o family_chat
 ```
 
@@ -107,7 +119,7 @@ positional arguments:
 optional arguments:
   -h, --help            Show help message and exit
   -o OUTPUT, --output OUTPUT
-                        Output file prefix (default: whatsapp_chat)
+                        Output file prefix (default: same directory and name as input file)
 ```
 
 ## Example Output
@@ -120,18 +132,18 @@ Total messages parsed: 1523
 Authors found: John Smith, .
 
 Exporting main chat data...
-✓ Exported to CSV: whatsapp_chat.csv
-✓ Exported to Excel: whatsapp_chat.xlsx
+✓ Exported to CSV: chat.csv
+✓ Exported to Excel: chat.xlsx
 
 Exporting individual author data...
 
 Author: John Smith (856 messages)
-✓ Exported to CSV: whatsapp_chat_John_Smith.csv
-✓ Exported to Excel: whatsapp_chat_John_Smith.xlsx
+✓ Exported to CSV: chat_John_Smith.csv
+✓ Exported to Excel: chat_John_Smith.xlsx
 
 Author: . (667 messages)
-✓ Exported to CSV: whatsapp_chat__.csv
-✓ Exported to Excel: whatsapp_chat__.xlsx
+✓ Exported to CSV: chat__.csv
+✓ Exported to Excel: chat__.xlsx
 
 ✓ All exports completed successfully!
 
